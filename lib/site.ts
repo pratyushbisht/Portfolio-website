@@ -14,5 +14,5 @@ export const links = {
   getInTouch: "/contact",
   allProjects: "/work",
   moreAboutMe: "/about",
-  resume: "https://drive.google.com/file/d/1KTsV55mff2NUdlhzrpbBsFCUlp1k7-DB/view?usp=sharing",
+  resume: "https://drive.google.com/file/d/1N0-YLroLXoReTflf1bIMTYe-YmEPRiB5/view?usp=sharing",
 };
