@@ -59,7 +59,7 @@ export function Hero() {
           </h1>
 
           <motion.p
-            className="t-body mt-[clamp(16px,2.2vw,28px)] max-w-[520px] text-text-secondary"
+            className="t-body mt-[clamp(16px,2.2vw,28px)] max-w-[520px] text-[#B0B0B0]"
             {...fadeUp(1.1)}
           >
             I&apos;m Pratyush, a UX designer who swapped debugging for design thinking, now

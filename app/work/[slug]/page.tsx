@@ -5,6 +5,7 @@ import { CaseStudyHero } from "@/components/case-study/CaseStudyHero";
 import { ChapterLayout } from "@/components/case-study/ChapterLayout";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { CHAPTERS, DOCS_CHAPTER, caseStudies, getCaseStudy } from "@/lib/case-studies";
+import { projectBySlug, workCards } from "@/lib/projects";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -15,8 +16,25 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const study = getCaseStudy((await params).slug);
-  return study ? { title: study.title, description: study.tagline } : {};
+  const { slug } = await params;
+  const study = getCaseStudy(slug);
+  if (!study) return {};
+  // Share copy comes from the project's Work card; its cover image is the preview,
+  // falling back to the site-wide og.png.
+  const card = workCards.find((c) => c.slug === slug);
+  const project = projectBySlug(slug);
+  const title = card?.title ?? study.title;
+  const description = card?.caption ?? study.tagline;
+  const cover = card?.image ?? (project && { src: project.image, alt: project.imageAlt });
+  const image = cover
+    ? { url: cover.src, alt: cover.alt }
+    : { url: "/og.png", width: 1200, height: 630, alt: "Pratyush Bisht, UX Designer and Researcher" };
+  return {
+    title,
+    description,
+    openGraph: { type: "article", title, description, url: `/work/${slug}`, images: [image] },
+    twitter: { card: "summary_large_image", title, description, images: [image.url] },
+  };
 }
 
 export default async function CaseStudyPage({ params }: Props) {

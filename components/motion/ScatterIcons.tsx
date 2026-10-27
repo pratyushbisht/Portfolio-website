@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
 import { BrickIcon, ClaudeSpark, FigmaLogo } from "@/components/ui/icons";
 
@@ -12,23 +13,24 @@ import { BrickIcon, ClaudeSpark, FigmaLogo } from "@/components/ui/icons";
 const ICONS = [
   { emoji: "🎮", top: 15, left: 10, size: 28, delay: 0.3, duration: 6 },
   { emoji: "✏️", top: 25, right: 12, size: 24, delay: 0.5, duration: 7 },
-  { emoji: "💡", top: 60, left: 8, size: 22, delay: 0.8, duration: 8 },
-  { emoji: "📱", top: 70, right: 10, size: 26, delay: 0.6, duration: 7.5 },
+  // Purdue logo in the spot the lightbulb used; the phone and target were removed.
+  { emoji: "purdue", top: 60, left: 8, size: 52, delay: 0.8, duration: 8 },
   { emoji: "figma", top: 12, right: 25, size: 24, delay: 1.0, duration: 9 },
-  { emoji: "🎯", top: 75, left: 14, size: 22, delay: 1.2, duration: 8.5 },
   { emoji: "🖱️", top: 45, right: 6, size: 20, delay: 0.9, duration: 7 },
   { emoji: "🧩", top: 50, left: 5, size: 24, delay: 0.4, duration: 6.5 },
   // Added beyond the Framer set, in gaps clear of the headline and buttons.
   { emoji: "chelsea", top: 32, left: 10, size: 28, delay: 0.7, duration: 7.5 },
   { emoji: "claude", top: 8, left: 92, size: 22, delay: 1.1, duration: 8 },
   { emoji: "⚽", top: 92, left: 8, size: 22, delay: 1.3, duration: 6.5 },
-  { emoji: "☕", top: 90, left: 84, size: 22, delay: 1.0, duration: 7 },
-  { emoji: "brick", top: 5, left: 30, size: 24, delay: 0.9, duration: 8 },
+  { emoji: "☕", top: 67, left: 89, size: 22, delay: 1.0, duration: 7 },
+  { emoji: "brick", top: 88, left: 82, size: 24, delay: 0.9, duration: 8 },
 ];
 
 const START = 0.6;
 const FLY = 1.8;
 const OPACITY = 0.5;
+/** Logos that must show at full strength rather than dimmed like the emoji. */
+const FULL_OPACITY = new Set(["purdue"]);
 const EASE = [0.16, 1, 0.3, 1] as const;
 /** Where the cluster starts, in % of the hero (matches Framer: top 45%, ~48% across). */
 const ORIGIN = { x: 48, y: 45 };
@@ -48,6 +50,19 @@ function Glyph({ emoji, size }: { emoji: string; size: number }) {
   if (emoji === "figma") return <FigmaLogo style={{ width: size, height: size }} />;
   if (emoji === "claude") return <ClaudeSpark style={{ width: size, height: size }} />;
   if (emoji === "brick") return <BrickIcon style={{ width: size, height: size }} />;
+  if (emoji === "purdue")
+    return (
+      <Image
+        src="/logos/purdue.svg"
+        alt="Purdue University"
+        width={280}
+        height={150}
+        sizes="60px"
+        quality={90}
+        draggable={false}
+        className="block h-auto w-[clamp(40px,3.4vw,60px)] max-w-none select-none"
+      />
+    );
   if (emoji === "chelsea")
     return (
       // eslint-disable-next-line @next/next/no-img-element
@@ -86,7 +101,7 @@ export function ScatterIcons({ reducedMotion }: { reducedMotion: boolean }) {
           const style = { left: `${left}%`, top: `${top}%`, marginLeft: -size / 2 };
           if (reducedMotion) {
             return (
-              <div key={i} className="absolute" style={{ ...style, opacity: OPACITY }}>
+              <div key={i} className="absolute" style={{ ...style, opacity: FULL_OPACITY.has(emoji) ? 1 : OPACITY }}>
                 <Glyph emoji={emoji} size={size} />
               </div>
             );
@@ -99,7 +114,7 @@ export function ScatterIcons({ reducedMotion }: { reducedMotion: boolean }) {
               className="absolute"
               style={style}
               initial={{ x: dx, y: dy, opacity: 0 }}
-              animate={{ x: 0, y: 0, opacity: OPACITY }}
+              animate={{ x: 0, y: 0, opacity: FULL_OPACITY.has(emoji) ? 1 : OPACITY }}
               transition={{
                 x: { delay: START + delay, duration: FLY, ease: EASE },
                 y: { delay: START + delay, duration: FLY, ease: EASE },
