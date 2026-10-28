@@ -10,7 +10,7 @@ import { usePrefersReducedMotion } from "@/lib/hooks";
 
 /**
  * Header logo with a greeting: on hover (with intent), keyboard focus, or a one-time
- * touch auto-greeting, the face logo is replaced in place by a head-and-shoulders
+ * auto-greeting per visit, the face logo is replaced in place by a head-and-shoulders
  * "mini me" that waves while the name fades out and a "Hi!" bubble appears.
  * Everything is absolutely positioned inside the existing logo slot, so the header
  * never changes size. Frames come from `npm run prep:mascot` (bust-*.png).
@@ -38,7 +38,7 @@ const HOLD = 300; // brief pause on the standing pose before the logo and name r
 const SHOW_FOR = WAVE_AT + WAVE_SWAPS * WAVE_STEP + HOLD;
 /** Reduced motion has no wave, so just show the pose and bubble for a moment. */
 const SHOW_FOR_REDUCED = 1400;
-const TOUCH_DELAY = 1200;
+const GREET_DELAY = 1200;
 const SESSION_KEY = "mascot-greeted";
 const FINE_POINTER = "(hover: hover) and (pointer: fine)";
 
@@ -95,10 +95,9 @@ function useMascot() {
   // Clear every timer on unmount so nothing fires into a dead component.
   useEffect(() => clearAll, [clearAll]);
 
-  // Touch devices: greet once per browser session, shortly after the first load.
+  // Every device: greet once per browser session, shortly after the first load.
   // The header persists across route changes, so this runs once per page load.
   useEffect(() => {
-    if (!window.matchMedia("(hover: none)").matches) return;
     let seen = false;
     try {
       seen = sessionStorage.getItem(SESSION_KEY) === "1";
@@ -107,7 +106,7 @@ function useMascot() {
       seen = true; // no storage: skip rather than risk greeting on every page
     }
     if (seen) return;
-    const t = window.setTimeout(() => show(), TOUCH_DELAY);
+    const t = window.setTimeout(() => show(), GREET_DELAY);
     return () => window.clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
