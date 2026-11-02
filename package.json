@@ -10,6 +10,7 @@
     "prep:mascot": "node scripts/prep-mascot.mjs"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "motion": "^12.23.0",
     "next": "^15.5.0",
     "react": "^19.1.0",

@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { Sora } from "next/font/google";
 import { Footer } from "@/components/Footer";
@@ -59,6 +60,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Footer />
         </MotionProvider>
+        {/* Cookie-free page views on Vercel; sends nothing in local dev. */}
+        <Analytics />
       </body>
     </html>
   );
